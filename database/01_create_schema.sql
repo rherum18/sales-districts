@@ -18,7 +18,7 @@ CREATE TABLE dbo.Salesperson
     Name          NVARCHAR(100)      NOT NULL,
  
     CONSTRAINT PK_Salesperson PRIMARY KEY (SalespersonId),
-    CONSTRAINT CK_Salesperson_Name_NotBlank CHECK (LEN(TRIM(Name)) > 0)
+    CONSTRAINT CK_Salesperson_Name_NotBlank CHECK (LEN(LTRIM(Name)) > 0)
     -- Names are deliberately not unique: two people can share a name.
 );
 GO
@@ -31,7 +31,7 @@ CREATE TABLE dbo.District
  
     CONSTRAINT PK_District PRIMARY KEY (DistrictId),
     CONSTRAINT UQ_District_Name UNIQUE (Name),
-    CONSTRAINT CK_District_Name_NotBlank CHECK (LEN(TRIM(Name)) > 0),
+    CONSTRAINT CK_District_Name_NotBlank CHECK (LEN(LTRIM(Name)) > 0),
     CONSTRAINT FK_District_PrimarySalesperson
         FOREIGN KEY (PrimarySalespersonId) REFERENCES dbo.Salesperson (SalespersonId),
  
@@ -68,7 +68,8 @@ CREATE TABLE dbo.Store
     DistrictId INT                NOT NULL,
  
     CONSTRAINT PK_Store PRIMARY KEY (StoreId),
-    CONSTRAINT CK_Store_Name_NotBlank CHECK (LEN(TRIM(Name)) > 0),
+    CONSTRAINT UQ_Store_District_Name UNIQUE (DistrictId, Name),
+    CONSTRAINT CK_Store_Name_NotBlank CHECK (LEN(LTRIM(Name)) > 0),
     CONSTRAINT FK_Store_District
         FOREIGN KEY (DistrictId) REFERENCES dbo.District (DistrictId)
 );
