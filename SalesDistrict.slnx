@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/SalesDistrict.Api/SalesDistrict.Api.csproj" />
+    <Project Path="src/SalesDistrict.Application/SalesDistrict.Application.csproj" />
+    <Project Path="src/SalesDistrict.Domain/SalesDistrict.Domain.csproj" />
     <Project Path="src/SalesDistrict.Wpf/SalesDistrict.Wpf.csproj" />
   </Folder>
   <Folder Name="/tests/">
