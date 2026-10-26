@@ -16,9 +16,23 @@ public class DistrictsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<District>>> Get()
+    public async Task<ActionResult<List<District>>> Districts()
     {
         var districts = await _districtService.GetDistrictsAsync();
         return Ok(districts);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> CreateDistrict([FromBody] District district)
+    {
+        await _districtService.CreateDistrictAsync(district);
+        return Ok();
+    }
+
+    [HttpPut("assign-primary-salesperson")]
+    public async Task<ActionResult> AssignPrimarySalesperson(int districtId, int salespersonId)
+    {
+        await _districtService.AssignPrimarySalespersonToDistrictAsync(districtId, salespersonId);
+        return Ok();
     }
 }
