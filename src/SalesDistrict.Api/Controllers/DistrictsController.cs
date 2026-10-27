@@ -1,38 +1,27 @@
 using Microsoft.AspNetCore.Mvc;
+using SalesDistrict.Api.Contracts;
 using SalesDistrict.Application.Services;
-using SalesDistrict.Domain;
 
 namespace SalesDistrict.Api.Controllers;
 
 [ApiController]
-[Route("api/districts")]
+[Route("api/v1/districts")]
 public class DistrictsController : ControllerBase
 {
-    private readonly DistrictService _districtService;
+    private readonly IDistrictService _districtService;
 
-    public DistrictsController(DistrictService districtService)
+    public DistrictsController(IDistrictService districtService)
     {
         _districtService = districtService;
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<District>>> Districts()
+    public async Task<ActionResult<IReadOnlyList<DistrictSummaryResponse>>> GetDistricts(CancellationToken cancellationToken)
     {
-        var districts = await _districtService.GetDistrictsAsync();
-        return Ok(districts);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult> CreateDistrict([FromBody] District district)
-    {
-        await _districtService.CreateDistrictAsync(district);
-        return Ok();
-    }
-
-    [HttpPut("assign-primary-salesperson")]
-    public async Task<ActionResult> AssignPrimarySalesperson(int districtId, int salespersonId)
-    {
-        await _districtService.AssignPrimarySalespersonToDistrictAsync(districtId, salespersonId);
-        return Ok();
+        var districts = await _districtService.GetDistrictsAsync(cancellationToken);
+        var response = districts
+            .Select(d => new DistrictSummaryResponse(d.DistrictId, d.Name))
+            .ToList();
+        return Ok(response);
     }
 }

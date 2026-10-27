@@ -1,24 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SalesDistrict.Domain;
+using SalesDistrict.Api.Contracts;
+using SalesDistrict.Application.Services;
 
-namespace SalesDistrict.Api.Controllers
+namespace SalesDistrict.Api.Controllers;
+
+[ApiController]
+[Route("api/v1/salespersons")]
+public class SalespersonController : ControllerBase
 {
-    [ApiController]
-    [Route("api/salespersons")]
-    public class SalespersonController : ControllerBase
-    {
-        [HttpPost]
-        public async Task<ActionResult> Create(Salesperson salesperson, int districtId)
-        {
-            
-            return Ok();
-        }
+    private readonly ISalespersonService _salespersonService;
 
-        [HttpDelete]
-        public async Task<ActionResult> Delete(int salespersonId)
-        {
-            // Implement the delete logic here
-            return Ok();
-        }
+    public SalespersonController(ISalespersonService salespersonService)
+    {
+        _salespersonService = salespersonService;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<SalespersonSummaryResponse>>> GetSalespersons(CancellationToken cancellationToken)
+    {
+        var salespersons = await _salespersonService.GetSalespersonsAsync(cancellationToken);
+        var response = salespersons
+            .Select(s => new SalespersonSummaryResponse(s.SalespersonId, s.Name))
+            .ToList();
+        return Ok(response);
     }
 }
+

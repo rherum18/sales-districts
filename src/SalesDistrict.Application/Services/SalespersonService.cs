@@ -1,26 +1,18 @@
-﻿using Dapper;
-using Microsoft.Data.SqlClient;
+﻿using SalesDistrict.Application.Abstractions;
 using SalesDistrict.Domain;
 
 namespace SalesDistrict.Application.Services;
 
-public class SalespersonService
+public sealed class SalespersonService : ISalespersonService
 {
-    private readonly string _connectionString;
+    private readonly ISalespersonRepository _repository;
 
-    public SalespersonService(string connectionString)
+    public SalespersonService(ISalespersonRepository repository)
     {
-        _connectionString = connectionString;
+        _repository = repository;
     }
 
-    public async Task<IReadOnlyList<Salesperson>> GetSalespersonsAsync()
-    {
-        const string sql = "SELECT SalespersonId, Name, PrimarySalespersonId FROM dbo.Salesperson";
+    public Task<IReadOnlyList<Salesperson>> GetSalespersonsAsync(CancellationToken cancellationToken = default)
+        => _repository.GetAllAsync(cancellationToken);
 
-        using var connection = new SqlConnection(_connectionString);
-
-        var salespersons = await connection.QueryAsync<Salesperson>(sql);
-
-        return salespersons.AsList();
-    }
 }
