@@ -6,19 +6,19 @@ namespace SalesDistrict.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/salespersons")]
-public class SalespersonController : ControllerBase
+public class SalespersonsController : ControllerBase
 {
-    private readonly ISalespersonService _salespersonService;
+    private readonly ISalespersonsService _salespersonsService;
 
-    public SalespersonController(ISalespersonService salespersonService)
+    public SalespersonsController(ISalespersonsService salespersonsService)
     {
-        _salespersonService = salespersonService;
+        _salespersonsService = salespersonsService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<SalespersonSummaryResponse>>> GetSalespersons(CancellationToken cancellationToken)
     {
-        var salespersons = await _salespersonService.GetSalespersonsAsync(cancellationToken);
+        var salespersons = await _salespersonsService.GetSalespersonsAsync(cancellationToken);
         var response = salespersons
             .Select(s => new SalespersonSummaryResponse(s.SalespersonId, s.Name))
             .ToList();

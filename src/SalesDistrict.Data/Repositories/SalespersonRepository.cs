@@ -21,7 +21,7 @@ public sealed class SalespersonRepository : ISalespersonRepository
             ORDER BY Name, SalespersonId
             """;
 
-        using var connection = _connectionFactory.Create();
+        await using var connection = _connectionFactory.Create();
         var command = new CommandDefinition(sql, cancellationToken: cancellationToken);
         var salespersons = await connection.QueryAsync<Salesperson>(command);
         return salespersons.AsList();

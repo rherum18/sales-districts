@@ -3,11 +3,11 @@ using SalesDistrict.Domain;
 
 namespace SalesDistrict.Application.Services;
 
-public sealed class SalespersonService : ISalespersonService
+public sealed class SalespersonsService : ISalespersonsService
 {
     private readonly ISalespersonRepository _repository;
 
-    public SalespersonService(ISalespersonRepository repository)
+    public SalespersonsService(ISalespersonRepository repository)
     {
         _repository = repository;
     }

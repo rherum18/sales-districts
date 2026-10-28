@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SalesDistrict.Domain;
+﻿namespace SalesDistrict.Domain;
 
 public class Salesperson
 {

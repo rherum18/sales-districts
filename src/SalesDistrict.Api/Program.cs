@@ -7,12 +7,16 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("SalesDistrict")
     ?? throw new InvalidOperationException("Missing connection string 'SalesDistrict'.");
 
+
 // Add services to the container.
+builder.Services.AddOpenApi();
+
 builder.Services.AddSingleton(new SqlConnectionFactory(connectionString));
+
 builder.Services.AddScoped<IDistrictRepository, DistrictRepository>();
-builder.Services.AddScoped<IDistrictService, DistrictService>();
+builder.Services.AddScoped<IDistrictsService, DistrictsService>();
 builder.Services.AddScoped<ISalespersonRepository, SalespersonRepository>();
-builder.Services.AddScoped<ISalespersonService, SalespersonService>();
+builder.Services.AddScoped<ISalespersonsService, SalespersonsService>();
 
 builder.Services.AddControllers();
 
