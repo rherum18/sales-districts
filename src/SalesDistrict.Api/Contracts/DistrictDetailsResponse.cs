@@ -3,7 +3,7 @@
 public sealed record DistrictDetailsResponse(
     int Id, 
     string Name, 
-    SalespersonSummaryResponse primarySalesperson, 
-    List<SalespersonSummaryResponse> secondarySalespersons,
-    List<StoreSummaryResponse> stores
+    SalespersonSummaryResponse PrimarySalesperson, 
+    List<SalespersonSummaryResponse> SecondarySalespersons,
+    List<StoreSummaryResponse> Stores
 );

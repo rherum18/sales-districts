@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
+using SalesDistrict.Application;
 using SalesDistrict.Application.Abstractions;
 using SalesDistrict.Domain;
 
@@ -7,6 +9,8 @@ namespace SalesDistrict.Data.Repositories;
 public sealed class DistrictRepository : IDistrictRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;
+
+    private const int ForeignKeyViolation = 547;
 
     public DistrictRepository(SqlConnectionFactory connectionFactory)
     {
@@ -68,5 +72,68 @@ public sealed class DistrictRepository : IDistrictRepository
             SecondarySalespersons = secondaries,
             Stores = stores,
         };
+    }
+
+    public async Task<bool> UpdateDistrictSalespersonsAsync(int districtId, int primarySalespersonId, IReadOnlyList<int> secondarySalespersonIds, CancellationToken cancellationToken)
+    {
+        const string deleteSql = """
+            DELETE FROM dbo.DistrictSecondarySalesperson
+            WHERE DistrictId = @DistrictId;
+            """;
+
+        const string updatePrimarySql = """
+            UPDATE dbo.District
+            SET PrimarySalespersonId = @PrimarySalespersonId
+            WHERE DistrictId = @DistrictId;
+            """;
+
+        const string insertSql = """
+            INSERT INTO dbo.DistrictSecondarySalesperson (DistrictId, SalespersonId, PrimarySalespersonId)
+            VALUES (@DistrictId, @SalespersonId, @PrimarySalespersonId);
+            """;
+
+        await using var connection = _connectionFactory.Create();
+        await connection.OpenAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        // Delete existing secondary salespersons
+        var deleteCommand = new CommandDefinition(deleteSql, new { DistrictId = districtId }, transaction: transaction, cancellationToken: cancellationToken);
+        await connection.ExecuteAsync(deleteCommand);
+
+        // Update primary salesperson
+        var updatePrimaryCommand = new CommandDefinition(updatePrimarySql, new { DistrictId = districtId, PrimarySalespersonId = primarySalespersonId }, transaction: transaction, cancellationToken: cancellationToken);
+        int rows;
+
+        try
+        {
+            rows = await connection.ExecuteAsync(updatePrimaryCommand);
+        }
+        catch (SqlException ex) when (ex.Number == ForeignKeyViolation)
+        {
+            throw new SalespersonsUpdateException($"Primary salesperson {primarySalespersonId} does not exist.", ex);
+        }
+
+        if (rows == 0)
+        {
+            return false;
+        }
+
+        // Insert new secondary salespersons
+        foreach (var salespersonId in secondarySalespersonIds)
+        {
+            var insertCommand = new CommandDefinition(insertSql, new { DistrictId = districtId, SalespersonId = salespersonId, PrimarySalespersonId = primarySalespersonId }, transaction: transaction, cancellationToken: cancellationToken);
+            try
+            {
+                await connection.ExecuteAsync(insertCommand);
+            }
+            catch (SqlException ex) when (ex.Number == ForeignKeyViolation)
+            {
+                throw new SalespersonsUpdateException($"Secondary salesperson {salespersonId} does not exist.", ex);
+            }
+        }
+
+        await transaction.CommitAsync(cancellationToken);
+
+        return true;
     }
 }

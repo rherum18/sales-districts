@@ -1,4 +1,4 @@
-﻿using SalesDistrict.Domain;
+﻿namespace SalesDistrict.Domain;
 
 public class DistrictDetails
 {

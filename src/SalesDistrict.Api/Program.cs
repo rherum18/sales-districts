@@ -2,6 +2,7 @@ using SalesDistrict.Application.Abstractions;
 using SalesDistrict.Application.Services;
 using SalesDistrict.Data;
 using SalesDistrict.Data.Repositories;
+using SalesDistrict.Api.ErrorHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("SalesDistrict")
@@ -12,7 +13,8 @@ var connectionString = builder.Configuration.GetConnectionString("SalesDistrict"
 builder.Services.AddOpenApi();
 
 builder.Services.AddSingleton(new SqlConnectionFactory(connectionString));
-
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<SalespersonsUpdateExceptionHandler>();
 builder.Services.AddScoped<IDistrictRepository, DistrictRepository>();
 builder.Services.AddScoped<IDistrictsService, DistrictsService>();
 builder.Services.AddScoped<ISalespersonRepository, SalespersonRepository>();
@@ -23,6 +25,8 @@ builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
