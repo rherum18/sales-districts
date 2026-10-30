@@ -76,7 +76,7 @@ ROLLBACK TRANSACTION;
 GO
 
 -- Test 10: The same store name is allowed in a different district
--- Expected: 1 row updated with store name = Aalborg
+-- Expected: 1 row inserted with store name = Aalborg
 BEGIN TRANSACTION;
 INSERT INTO dbo.Store (Name, DistrictId) VALUES (N'Aalborg', 2);
 ROLLBACK TRANSACTION;

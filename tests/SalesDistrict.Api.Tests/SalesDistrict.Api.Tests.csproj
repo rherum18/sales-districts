@@ -29,4 +29,9 @@
     <ProjectReference Include="..\..\src\SalesDistrict.Api\SalesDistrict.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\database\01_create_schema.sql" Link="database\01_create_schema.sql" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\database\02_seed_data.sql" Link="database\02_seed_data.sql" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
