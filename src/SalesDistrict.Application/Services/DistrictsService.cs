@@ -21,7 +21,7 @@ public sealed class DistrictsService : IDistrictsService
     public Task<DistrictDetails?> GetDistrictAsync(int id, CancellationToken cancellationToken = default)
         => _repository.GetByIdAsync(id, cancellationToken);
 
-    async public Task<DistrictDetails?> UpdateDistrictSalespersonsAsync(int districtId, int primarySalespersonId, IReadOnlyList<int> secondarySalespersonIds, CancellationToken cancellationToken = default)
+    public async Task<DistrictDetails?> UpdateDistrictSalespersonsAsync(int districtId, int primarySalespersonId, IReadOnlyList<int> secondarySalespersonIds, CancellationToken cancellationToken = default)
     {
         ValidateUpdate(primarySalespersonId, secondarySalespersonIds);
 

@@ -8,4 +8,13 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Autofac" Version="9.3.4" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.14" />
+    </ItemGroup>
+	<ItemGroup>
+		<None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
 </Project>

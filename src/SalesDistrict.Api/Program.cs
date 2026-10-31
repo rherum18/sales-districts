@@ -10,13 +10,10 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-
     var builder = WebApplication.CreateBuilder(args);
     var connectionString = builder.Configuration.GetConnectionString("SalesDistrict")
         ?? throw new InvalidOperationException("Missing connection string 'SalesDistrict'.");
 
-
-    // Add services to the container.
     builder.Services.AddOpenApi();
 
     builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -42,7 +39,6 @@ try
     app.UseSerilogRequestLogging();
     app.UseExceptionHandler();
 
-    // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();

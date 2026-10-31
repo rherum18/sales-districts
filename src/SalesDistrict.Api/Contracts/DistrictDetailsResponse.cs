@@ -4,6 +4,6 @@ public sealed record DistrictDetailsResponse(
     int Id, 
     string Name, 
     SalespersonSummaryResponse PrimarySalesperson, 
-    List<SalespersonSummaryResponse> SecondarySalespersons,
-    List<StoreSummaryResponse> Stores
+    IReadOnlyList<SalespersonSummaryResponse> SecondarySalespersons,
+    IReadOnlyList<StoreSummaryResponse> Stores
 );

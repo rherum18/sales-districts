@@ -96,7 +96,7 @@ public sealed class DistrictRepository : IDistrictRepository
         await connection.OpenAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
-        // Delete existing secondary salespersons
+        // Delete existing secondary salespersons, before updating the primary salesperson to avoid foreign key constraint violations
         var deleteCommand = new CommandDefinition(deleteSql, new { DistrictId = districtId }, transaction: transaction, cancellationToken: cancellationToken);
         await connection.ExecuteAsync(deleteCommand);
 

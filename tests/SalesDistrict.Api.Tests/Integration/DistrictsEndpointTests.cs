@@ -13,7 +13,7 @@ public class DistrictsEndpointTests(SalesDistrictApiFactory factory)
         var client = factory.CreateClient();
         
         // Act
-        var districts = await client.GetFromJsonAsync<List<DistrictSummaryResponse>>("/api/v1/districts", TestContext.Current.CancellationToken);
+        var districts = await client.GetFromJsonAsync<IReadOnlyList<DistrictSummaryResponse>>("/api/v1/districts", TestContext.Current.CancellationToken);
 
         // Assert
         Assert.NotNull(districts);

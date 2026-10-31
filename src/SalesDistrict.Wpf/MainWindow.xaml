@@ -3,10 +3,85 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SalesDistrict.Wpf"
+        xmlns:models="clr-namespace:SalesDistrict.Wpf.Models"
+        xmlns:viewModels="clr-namespace:SalesDistrict.Wpf.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
+        Title="Sales districts" Height="520" Width="800">
+    <Window.Resources>
+        <!-- How a salesperson is shown everywhere. Two salespersons can share a name, so the id is shown too -->
+        <DataTemplate DataType="{x:Type models:Salesperson}">
+            <TextBlock>
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0} {1}">
+                        <Binding Path="Id" />
+                        <Binding Path="Name" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+        </DataTemplate>
+    </Window.Resources>
 
-    </Grid>
+    <DockPanel Margin="12">
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,12">
+            <Button Content="Refresh" Command="{Binding LoadCommand}" Padding="12,4" />
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="Firebrick" Margin="12,0" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ListBox ItemsSource="{Binding Districts}"
+                     SelectedItem="{Binding SelectedDistrict}"
+                     DisplayMemberPath="Name" />
+
+            <StackPanel Grid.Column="1" Margin="16,0,0,0">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <!-- Hide the details until a district has been loaded -->
+                            <DataTrigger Binding="{Binding SelectedDistrictDetails}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+
+                <StackPanel DataContext="{Binding SelectedDistrictDetails}">
+                    <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="SemiBold" />
+
+                    <TextBlock Text="Primary salesperson" FontWeight="SemiBold" Margin="0,12,0,4" />
+                    <ContentControl Content="{Binding PrimarySalesperson}" />
+
+                    <TextBlock Text="Secondary salespersons" FontWeight="SemiBold" Margin="0,12,0,4" />
+                    <ItemsControl ItemsSource="{Binding SecondarySalespersons}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,2">
+                                    <ContentControl Content="{Binding}" VerticalAlignment="Center" />
+                                    <!-- This template's DataContext is the salesperson, so the command is taken from the window's view model -->
+                                    <Button Content="Remove" Margin="8,0,0,0" Padding="6,0"
+                                            Command="{Binding DataContext.RemoveSecondaryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Text="Stores" FontWeight="SemiBold" Margin="0,12,0,4" />
+                    <ItemsControl ItemsSource="{Binding Stores}" DisplayMemberPath="Name" />
+                </StackPanel>
+
+                <TextBlock Text="Assign salesperson" FontWeight="SemiBold" Margin="0,16,0,4" />
+                <StackPanel Orientation="Horizontal">
+                    <ComboBox ItemsSource="{Binding Salespersons}" SelectedItem="{Binding SelectedSalesperson}" Width="200" />
+                    <Button Content="Set as primary" Command="{Binding SetAsPrimaryCommand}" Margin="8,0,0,0" Padding="8,2" />
+                    <Button Content="Add as secondary" Command="{Binding AddAsSecondaryCommand}" Margin="8,0,0,0" Padding="8,2" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </Window>

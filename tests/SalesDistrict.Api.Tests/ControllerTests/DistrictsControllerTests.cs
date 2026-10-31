@@ -39,7 +39,7 @@ public class DistrictsControllerTests
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var returnedDistricts = Assert.IsAssignableFrom<IReadOnlyList<DistrictSummaryResponse>>(okResult.Value);
-        List<DistrictSummaryResponse> expected = [new(7, "TestName1"), new(8, "TestName2")];
+        IReadOnlyList<DistrictSummaryResponse> expected = [new(7, "TestName1"), new(8, "TestName2")];
         Assert.Equal(expected, returnedDistricts);
     }
 
