@@ -2,6 +2,7 @@ using SalesDistrict.Application;
 using SalesDistrict.Application.Abstractions;
 using SalesDistrict.Application.Services;
 using SalesDistrict.Domain;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace SalesDistrict.Api.Tests.ServiceTests;
 
@@ -36,7 +37,7 @@ public class DistrictsServiceTests
     {
         // Arrange
         var repository = new FakeDistrictRepository();
-        var service = new DistrictsService(repository);
+        var service = new DistrictsService(repository, NullLogger<DistrictsService>.Instance);
 
         // Act
         var ex = await Assert.ThrowsAsync<SalespersonsUpdateException>(
@@ -52,7 +53,7 @@ public class DistrictsServiceTests
     {
         // Arrange
         var repository = new FakeDistrictRepository();
-        var service = new DistrictsService(repository);
+        var service = new DistrictsService(repository, NullLogger<DistrictsService>.Instance);
 
         // Act
         var ex = await Assert.ThrowsAsync<SalespersonsUpdateException>(
@@ -67,7 +68,7 @@ public class DistrictsServiceTests
     public async Task UpdateDistrictSalespersons_UnknownDistrict_ReturnsNull()
     {
         // Arrange
-        var service = new DistrictsService(new FakeDistrictRepository(districtExists: false));
+        var service = new DistrictsService(new FakeDistrictRepository(districtExists: false), NullLogger<DistrictsService>.Instance);
 
         // Act
         var result = await service.UpdateDistrictSalespersonsAsync(999, 1, [2], TestContext.Current.CancellationToken);
@@ -81,7 +82,7 @@ public class DistrictsServiceTests
     {
         // Arrange
         var repository = new FakeDistrictRepository();
-        var service = new DistrictsService(repository);
+        var service = new DistrictsService(repository, NullLogger<DistrictsService>.Instance);
 
         // Act
         var result = await service.UpdateDistrictSalespersonsAsync(7, 1, [2], TestContext.Current.CancellationToken);

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using SalesDistrict.Application.Abstractions;
 using SalesDistrict.Domain;
 
@@ -6,10 +7,12 @@ namespace SalesDistrict.Application.Services;
 public sealed class DistrictsService : IDistrictsService
 {
     private readonly IDistrictRepository _repository;
+    private readonly ILogger<DistrictsService> _logger;
 
-    public DistrictsService(IDistrictRepository repository)
+    public DistrictsService(IDistrictRepository repository, ILogger<DistrictsService> logger)
     {
         _repository = repository;
+        _logger = logger;
     }
 
     public Task<IReadOnlyList<District>> GetDistrictsAsync(CancellationToken cancellationToken = default)
@@ -28,6 +31,9 @@ public sealed class DistrictsService : IDistrictsService
         {
             return null;
         }
+
+        _logger.LogInformation("Updated salespersons for district {DistrictId}: primary {PrimarySalespersonId}, secondaries {SecondarySalespersonIds}",
+            districtId, primarySalespersonId, secondarySalespersonIds);
 
         return await _repository.GetByIdAsync(districtId, cancellationToken);
     }
