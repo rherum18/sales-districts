@@ -54,7 +54,7 @@ internal sealed class FakeSalesDistrictApiClient : ISalesDistrictApiClient
             []));
     }
 
-    // Every district starts with Anna as primary and Bo and Mathias as secondary
+    // Every district starts with Anna as primary and Bo and Mathias as secondaries
     public static DistrictDetails DetailsFor(int districtId) => new(
         districtId,
         $"District {districtId}",
