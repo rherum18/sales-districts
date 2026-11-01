@@ -3,8 +3,15 @@ using SalesDistrict.Application;
 
 namespace SalesDistrict.Api.ErrorHandling;
 
-public sealed class SalespersonsUpdateExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
+public sealed class SalespersonsUpdateExceptionHandler : IExceptionHandler
 {
+    private readonly IProblemDetailsService _problemDetailsService;
+
+    public SalespersonsUpdateExceptionHandler(IProblemDetailsService problemDetailsService)
+    {
+        _problemDetailsService = problemDetailsService;
+    }
+
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         if (exception is not SalespersonsUpdateException)
@@ -14,7 +21,7 @@ public sealed class SalespersonsUpdateExceptionHandler(IProblemDetailsService pr
 
         httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
 
-        return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
+        return await _problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = httpContext,
             Exception = exception,

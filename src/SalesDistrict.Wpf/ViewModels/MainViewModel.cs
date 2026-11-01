@@ -7,8 +7,15 @@ using SalesDistrict.Wpf.Models;
 
 namespace SalesDistrict.Wpf.ViewModels;
 
-public sealed partial class MainViewModel(ISalesDistrictApiClient apiClient) : ObservableObject
+public sealed partial class MainViewModel : ObservableObject
 {
+    private readonly ISalesDistrictApiClient _apiClient;
+
+    public MainViewModel(ISalesDistrictApiClient apiClient)
+    {
+        _apiClient = apiClient;
+    }
+
     public ObservableCollection<District> Districts { get; } = [];
 
     public ObservableCollection<Salesperson> Salespersons { get; } = [];
@@ -35,8 +42,8 @@ public sealed partial class MainViewModel(ISalesDistrictApiClient apiClient) : O
         ErrorMessage = null;
         try
         {
-            var districts = await apiClient.GetDistrictsAsync();
-            var salespersons = await apiClient.GetSalespersonsAsync();
+            var districts = await _apiClient.GetDistrictsAsync();
+            var salespersons = await _apiClient.GetSalespersonsAsync();
 
             Districts.Clear();
             foreach (var district in districts)
@@ -70,7 +77,7 @@ public sealed partial class MainViewModel(ISalesDistrictApiClient apiClient) : O
         ErrorMessage = null;
         try
         {
-            var details = await apiClient.GetDistrictDetailsAsync(district.Id);
+            var details = await _apiClient.GetDistrictDetailsAsync(district.Id);
 
             // The user may have clicked another district while this one was loading
             if (district == SelectedDistrict)
@@ -132,7 +139,7 @@ public sealed partial class MainViewModel(ISalesDistrictApiClient apiClient) : O
         ErrorMessage = null;
         try
         {
-            var details = await apiClient.UpdateDistrictSalespersonsAsync(districtId, primarySalespersonId, secondarySalespersonIds);
+            var details = await _apiClient.UpdateDistrictSalespersonsAsync(districtId, primarySalespersonId, secondarySalespersonIds);
 
             // The user may have clicked another district while the change was being saved
             if (districtId == SelectedDistrict?.Id)

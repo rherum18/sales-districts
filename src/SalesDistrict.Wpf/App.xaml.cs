@@ -19,6 +19,7 @@ public partial class App : Application
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json")
             .Build();
+
         var apiBaseAddress = configuration["Api:BaseAddress"]
             ?? throw new InvalidOperationException("Missing setting 'Api:BaseAddress'.");
 

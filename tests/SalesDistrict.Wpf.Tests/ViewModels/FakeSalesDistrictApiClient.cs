@@ -12,8 +12,9 @@ internal sealed class FakeSalesDistrictApiClient : ISalesDistrictApiClient
     public static readonly Salesperson Anna = new(1, "Anna Jensen");
     public static readonly Salesperson Bo = new(2, "Bo Sørensen");
     public static readonly Salesperson Carl = new(3, "Carl Nielsen");
+    public static readonly Salesperson Mathias = new(4, "Mathias Hansen");
 
-    private static readonly Salesperson[] AllSalespersons = [Anna, Bo, Carl];
+    private static readonly Salesperson[] AllSalespersons = [Anna, Bo, Carl, Mathias];
 
     public bool ApiIsDown { get; init; }
 
@@ -53,11 +54,11 @@ internal sealed class FakeSalesDistrictApiClient : ISalesDistrictApiClient
             []));
     }
 
-    // Every district starts with Anna as primary and Bo as secondary
+    // Every district starts with Anna as primary and Bo and Mathias as secondary
     public static DistrictDetails DetailsFor(int districtId) => new(
         districtId,
         $"District {districtId}",
         Anna,
-        [Bo],
+        [Bo, Mathias],
         [new Store(1, "Aalborg")]);
 }

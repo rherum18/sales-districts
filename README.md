@@ -9,7 +9,7 @@ script 01 creates the tables and constraints for the entities, script 02 fills t
 The WPF project connects to localhost using port 5255
 
 Next step was mapping out the controllers and service layer, here I wanted to handle some of the more complex business logic in the service layer and keep the controllers as thin as possible.
-Aswell as taking care of any constraints that might not be easy to handle in the DB without compromising performance and readability
+As well as taking care of any constraints that might not be easy to handle in the DB without compromising performance and readability
 
 There are only 2 controller classes, One for handling all actions that have something to do with districts and updating them, 
 and 1 for handling all actions that have something to do with salespersons. The DisctrictsController contains a standard Getter to get all districts, a Getter to get a district by id with details, 

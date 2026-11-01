@@ -17,7 +17,7 @@ public class MainViewModelTests
 
         // Assert
         Assert.Equal([Nordjylland, Midtjylland], viewModel.Districts);
-        Assert.Equal([Anna, Bo, Carl], viewModel.Salespersons);
+        Assert.Equal([Anna, Bo, Carl, Mathias], viewModel.Salespersons);
         Assert.Null(viewModel.ErrorMessage);
     }
 
@@ -95,7 +95,7 @@ public class MainViewModelTests
 
         // Assert
         Assert.Equal(Bo, viewModel.SelectedDistrictDetails?.PrimarySalesperson);
-        Assert.Empty(viewModel.SelectedDistrictDetails!.SecondarySalespersons);
+        Assert.Equal([Mathias], viewModel.SelectedDistrictDetails!.SecondarySalespersons);
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class MainViewModelTests
 
         // Assert
         Assert.Equal(Anna, viewModel.SelectedDistrictDetails?.PrimarySalesperson);
-        Assert.Equal([Bo, Carl], viewModel.SelectedDistrictDetails!.SecondarySalespersons);
+        Assert.Equal([Bo, Mathias, Carl], viewModel.SelectedDistrictDetails!.SecondarySalespersons);
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class MainViewModelTests
 
         // Assert
         Assert.Equal(Anna, viewModel.SelectedDistrictDetails?.PrimarySalesperson);
-        Assert.Empty(viewModel.SelectedDistrictDetails!.SecondarySalespersons);
+        Assert.Equal([Mathias], viewModel.SelectedDistrictDetails!.SecondarySalespersons);
     }
 
     [Fact]
@@ -140,7 +140,7 @@ public class MainViewModelTests
 
         // Assert
         Assert.Equal(apiMessage, viewModel.ErrorMessage);
-        Assert.Equal([Bo], viewModel.SelectedDistrictDetails!.SecondarySalespersons);
+        Assert.Equal([Bo, Mathias], viewModel.SelectedDistrictDetails!.SecondarySalespersons);
     }
 
     private static async Task<MainViewModel> CreateWithNordjyllandSelectedAsync(FakeSalesDistrictApiClient apiClient)

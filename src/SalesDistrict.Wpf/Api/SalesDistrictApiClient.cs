@@ -5,17 +5,24 @@ using SalesDistrict.Wpf.Models;
 
 namespace SalesDistrict.Wpf.Api;
 
-public sealed class SalesDistrictApiClient(HttpClient httpClient) : ISalesDistrictApiClient
+public sealed class SalesDistrictApiClient : ISalesDistrictApiClient
 {
+    private readonly HttpClient _httpClient;
+
+    public SalesDistrictApiClient(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+    }
+
     public async Task<IReadOnlyList<District>> GetDistrictsAsync(CancellationToken cancellationToken = default)
     {
-        var response = await httpClient.GetFromJsonAsync<IReadOnlyList<DistrictSummaryResponse>>("api/v1/districts", cancellationToken) ?? [];
+        var response = await _httpClient.GetFromJsonAsync<IReadOnlyList<DistrictSummaryResponse>>("api/v1/districts", cancellationToken) ?? [];
         return response.Select(district => new District(district.Id, district.Name)).ToList();
     }
 
     public async Task<DistrictDetails> GetDistrictDetailsAsync(int districtId, CancellationToken cancellationToken = default)
     {
-        var response = await httpClient.GetFromJsonAsync<DistrictDetailsResponse>($"api/v1/districts/{districtId}", cancellationToken)
+        var response = await _httpClient.GetFromJsonAsync<DistrictDetailsResponse>($"api/v1/districts/{districtId}", cancellationToken)
             ?? throw new HttpRequestException($"The API returned no details for district {districtId}.");
 
         return MapDistrictDetails(response);
@@ -23,7 +30,7 @@ public sealed class SalesDistrictApiClient(HttpClient httpClient) : ISalesDistri
 
     public async Task<IReadOnlyList<Salesperson>> GetSalespersonsAsync(CancellationToken cancellationToken = default)
     {
-        var response = await httpClient.GetFromJsonAsync<IReadOnlyList<SalespersonSummaryResponse>>("api/v1/salespersons", cancellationToken) ?? [];
+        var response = await _httpClient.GetFromJsonAsync<IReadOnlyList<SalespersonSummaryResponse>>("api/v1/salespersons", cancellationToken) ?? [];
         return response.Select(MapSalesperson).ToList();
     }
 
@@ -34,7 +41,7 @@ public sealed class SalesDistrictApiClient(HttpClient httpClient) : ISalesDistri
         CancellationToken cancellationToken = default)
     {
         var request = new UpdateDistrictSalespersonsRequest(primarySalespersonId, secondarySalespersonIds);
-        using var response = await httpClient.PutAsJsonAsync($"api/v1/districts/{districtId}/salespersons", request, cancellationToken);
+        using var response = await _httpClient.PutAsJsonAsync($"api/v1/districts/{districtId}/salespersons", request, cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
             throw await CreateExceptionAsync(response, cancellationToken);
