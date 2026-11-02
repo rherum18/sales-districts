@@ -4,7 +4,7 @@ The idea for this project is to start with the DB design first and foremost to g
 
 I wanted to capture as much of the business logic in the Constraints of the DB since this will help remove unnecessary complexity in the code and make it easier to maintain.
 
-I created a LocalDB instance and created a database called SalesDistricts. I then created the tables and constraints for the entities that I wanted to capture in the DB.
+I created a LocalDB instance and created a database called SalesDistrict. I then created the tables and constraints for the entities that I wanted to capture in the DB.
 script 01 creates the tables and constraints for the entities, script 02 fills the tables with data.
 The WPF project connects to localhost using port 5255
 
@@ -12,8 +12,8 @@ Next step was mapping out the controllers and service layer, here I wanted to ha
 As well as taking care of any constraints that might not be easy to handle in the DB without compromising performance and readability
 
 There are only 2 controller classes, One for handling all actions that have something to do with districts and updating them, 
-and 1 for handling all actions that have something to do with salespersons. The DisctrictsController contains a standard Getter to get all districts, a Getter to get a district by id with details, 
-and a PUT method to update the salespersons for a district. The SalespersonsController contains a standard Getter to get all salespersons and a Getter to get a salesperson by id.
+and 1 for handling all actions that have something to do with salespersons. The DistrictsController contains a standard Getter to get all districts, a Getter to get a district by id with details, 
+and a PUT method to update the salespersons for a district. The SalespersonsController contains a standard Getter to get all salespersons.
 The PUT replaces the whole assignment, and therefore there is no need for a DELETE method.
 
 Response and request classes are neatly placed inside the Contracts folder.
@@ -21,13 +21,15 @@ Response and request classes are neatly placed inside the Contracts folder.
 ErrorHandling contains a handler class for our custom exception. The custom exception class was created such that user can get proper readable error messages when something goes wrong. 
 The exception is thrown in either in the service layer or the repository layer depending on the error, it then goes up through the controller layer and is then caught by the ExceptionHandler 
 where it is then returned to the user as a proper response. Most problems result in a 400 Bad Request. In the case that the primary or a secondary salesperson does not exist the DistrictRepository
-translates SQL error 547 to a 400 Bad Request.
+throws an SQL error 547 which the handler translates to a 400 Bad Request.
 
 The Service layer houses the business logic, the class for the custom exception. The way this is designed 
 is using interfaces to define the contract for the service and then implementing that contract in a concrete class. This allows for easy testing and mocking of the service layer.
 The Service classes themselves call upon the repository layer to get the data they need to perform their business logic. This helps remove data access logic from the service layer 
 and keeps it focused on business logic only. These repositories are accessed through yet another abstraction which is the interfaces for the repositories. 
 This again allows for easy mocking of the repositories in the service layer tests.
+
+I chose to not enforce the rule that each salesperson has at least 1 district, this was done such that a new salesperson can be added to the system without a district.
 
 The Data layer houses the repository classes that are responsible for accessing the data from the database. These classes implement the repository interfaces defined in the application layer.
 It also houses the SqlConnectionFactory class which is responsible for creating the SqlConnection objects that are used to access the database. This class is used by the repository classes to get a connection to the database.
@@ -37,10 +39,11 @@ The Domain class houses all the entities that are used in the application. These
 Finally the test folder contain both Integration and unitTests. IntegrationTests handle the end to end testing of the apis, while the unitTests utilise a fakeService and fakeRepository 
 to test the service layer in isolation. The unitTests are designed to test the business logic in the service layer without having to worry about the data access layer or the database itself.
 Furthermore a SalesDistrictApiFactory was introduced to replicate the schemas from the production database into a test DB to be used by all integrationTests. This was done to avoid any tests affecting 
-the production database and to ensure that the tests are run in a controlled environment. The factory is responsible for creating the test database and seeding it with test data before each test is run. 
+the production database and to ensure that the tests are run in a controlled environment. The factory is responsible for creating the test database and seeding it with test data before once for the getter test
+and for each PUT test the test DB is reset inbetween. 
 This ensures that each test is run in a clean state and that the tests do not interfere with each other.
 
-Serilog was introduced to log all requests and responses to the api. This was done to help with debugging and to provide a way to track down any issues that might arise in production.
+Serilog was introduced to log for each request. This was done to help with debugging and to provide a way to track down any issues that might arise in production.
 
 Autofac was introduced to handle dependency injection. Autofac also provides a way to register modules which is used to register all the dependencies for each layer in one place.
 It also enables registration via naming conventions which is used to register all the services and repositories in one place. This all helps keep the Program.cs file clean and easy to read.

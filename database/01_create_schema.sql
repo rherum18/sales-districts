@@ -76,8 +76,7 @@ CREATE TABLE dbo.Store
 GO
  
 -- SQL Server does not index foreign keys automatically.
--- These support lookups such as "all districts for a salesperson" and "all stores in a district".
+-- These support lookups such as "all districts for a salesperson".
 CREATE INDEX IX_District_PrimarySalespersonId ON dbo.District (PrimarySalespersonId);
 CREATE INDEX IX_DSS_SalespersonId             ON dbo.DistrictSecondarySalesperson (SalespersonId);
-CREATE INDEX IX_Store_DistrictId              ON dbo.Store (DistrictId);
 GO

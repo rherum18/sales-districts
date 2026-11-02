@@ -65,7 +65,7 @@ public sealed partial class MainViewModel : ObservableObject
 
     partial void OnSelectedDistrictChanged(District? value) => LoadDistrictDetailsCommand.Execute(value);
 
-    [RelayCommand(AllowConcurrentExecutions = true)]
+    [RelayCommand]
     private async Task LoadDistrictDetailsAsync(District? district)
     {
         SelectedDistrictDetails = null;

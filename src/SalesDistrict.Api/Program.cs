@@ -30,7 +30,7 @@ try
         .ReadFrom.Configuration(builder.Configuration)
         .ReadFrom.Services(services));
 
-    builder.Services.AddControllers().AddControllersAsServices();
+    builder.Services.AddControllers();
 
     builder.Services.AddAuthorization();
 
@@ -43,8 +43,10 @@ try
     {
         app.MapOpenApi();
     }
-
-    app.UseHttpsRedirection();
+    else
+    {
+        app.UseHttpsRedirection();
+    }
 
     app.UseAuthorization();
 
